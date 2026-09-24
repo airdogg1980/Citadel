@@ -292,6 +292,7 @@ struct SFTPMessageParser: ByteToMessageDecoder {
             
             for _ in 0..<componentCount {
                 guard
+                    let filenameBytes = payload.getSSHStringBytes(),
                     let filename = payload.readSSHString(),
                     let longname = payload.readSSHString(),
                     let attributes = payload.readSFTPFileAttributes()
@@ -302,6 +303,7 @@ struct SFTPMessageParser: ByteToMessageDecoder {
                 components.append(
                     .init(
                         filename: filename,
+                        filenameBytes: filenameBytes,
                         longname: longname,
                         attributes: attributes
                     )

@@ -2,12 +2,22 @@ import NIO
 import Foundation
 
 public struct SFTPPathComponent: Sendable {
+    /// The filename decoded as UTF-8, invalid sequences replaced by U+FFFD (the SFTP protocol carries
+    /// names as octet strings; servers on Linux filesystems may send bytes that are not UTF-8).
     public let filename: String
+    /// The filename's bytes exactly as the server sent them. A client that must know whether a name
+    /// decodes — or must send such a name back unchanged — reads these; `filename` is lossy for them.
+    public let filenameBytes: [UInt8]
     public let longname: String
     public let attributes: SFTPFileAttributes
     
     public init(filename: String, longname: String, attributes: SFTPFileAttributes) {
+        self.init(filename: filename, filenameBytes: Array(filename.utf8), longname: longname, attributes: attributes)
+    }
+    
+    public init(filename: String, filenameBytes: [UInt8], longname: String, attributes: SFTPFileAttributes) {
         self.filename = filename
+        self.filenameBytes = filenameBytes
         self.longname = longname
         self.attributes = attributes
     }

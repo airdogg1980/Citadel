@@ -125,6 +125,23 @@ extension ByteBuffer {
         setInteger(UInt32(writerIndex - oldWriterIndex - 4), at: oldWriterIndex)
     }
     
+    mutating func writeSSHString(bytes: [UInt8]) {
+        writeInteger(UInt32(bytes.count))
+        writeBytes(bytes)
+    }
+    
+    /// The bytes of the SSH string at the reader index, without consuming it.
+    func getSSHStringBytes() -> [UInt8]? {
+        guard
+            let length = getInteger(at: self.readerIndex, as: UInt32.self),
+            let bytes = getBytes(at: self.readerIndex + 4, length: Int(length))
+        else {
+            return nil
+        }
+        
+        return bytes
+    }
+    
     mutating func readSSHString() -> String? {
         guard
             let length = getInteger(at: self.readerIndex, as: UInt32.self),

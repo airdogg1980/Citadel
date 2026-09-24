@@ -86,7 +86,7 @@ final class SFTPMessageSerializer: MessageToByteEncoder {
             out.writeInteger(name.count)
             
             for component in name.components {
-                out.writeSSHString(component.filename)
+                out.writeSSHString(bytes: component.filenameBytes)
                 out.writeSSHString(component.longname)
                 out.writeSFTPFileAttributes(component.attributes)
             }
